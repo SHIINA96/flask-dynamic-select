@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Python Flask Dynamic Select Box using Flask-WTF, javascript and SQLAlchemy</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet"
+        id="bootstrap-css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <p>
+                <h2>Python Flask Dynamic Select Box using Flask-WTF, javascript and SQLAlchemy</h2>
+                </p>
+                <form method="POST">
+                    {{ form.csrf_token}}
+                    <div class="form-group">
+                        <!-- <label for="email">地点:</label> -->
+                        {{ form.location(class="form-control") }}
+                    </div>
+                    <div class="form-group">
+                        <!-- <label for="email">规格:</label> -->
+                        {{ form.size(class="form-control")}}
+                    </div>
+                    <div class="form-group">
+                        <!-- <label for="email">物品:</label> -->
+                        {{ form.item(class="form-control")}}
+                    </div>
+                    <input type="submit" class="btn btn-success" btn-lg>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        var location_select = document.getElementById('location');
+        var size_select = document.getElementById('size');
+        var item_select = document.getElementById('item');
+
+        location_select.onchange = function () {
+            // 获取选择框中的内容
+            get_size = location_select.value;
+            // 捕获 Flask 中的 URL， 使用 unescape() 转换为 utf8 编码
+            fetch('size/' + unescape(get_size)).then(function (response) {
+                response.json().then(function (data) {
+                    optionHTML = '';
+                    for (size of data.sizelocation) {
+                        // size.size 决定返回到选择栏内的选项
+                        optionHTML += '<option value="' + size.size + '">' + size.size + '</option>'
+                    }
+                    size_select.innerHTML = optionHTML;
+                });
+            });
+        }
+        
+        size_select.onchange = function () {
+            get_item = size_select.value;
+            fetch('item/' + unescape(get_item)).then(function (response) {
+                response.json().then(function (data) {
+                    optionHTML = '';
+                    for (item of data.itemList) {
+                        optionHTML += '<option value="' + item.item + '">' + item.item + '</option>'
+                    }
+                    item_select.innerHTML = optionHTML;
+                });
+            });
+        }
+    </script>
+</body>
+
+</html>

@@ -8,7 +8,7 @@ from urllib.parse import unquote
 def outbound():
     form = Form()
     form.location.choices = ['木星', '地球']
-  
+ 
     if request.method == 'POST':
         location = Storage.query.filter_by(location=form.location.data).first()
         size = Storage.query.filter_by(size=form.size.data).first()
@@ -27,6 +27,7 @@ def sizebylocation(get_size):
         sizeObj['id'] = item.id
         sizeObj['size'] = item.size
         sizeArray.append(sizeObj)
+        sizeArray.insert(0,'--')
     # 将 List 转为 JSON 并添加 id
     return jsonify({'sizelocation' : sizeArray})
   
@@ -39,4 +40,17 @@ def item(get_item):
         itemObj['size'] = item.size
         itemObj['item'] = item.item
         itemArray.append(itemObj)
-    return jsonify({'itemList' : itemArray}) 
+        itemArray.insert(0,'--')
+    return jsonify({'itemList' : itemArray})
+
+@app.route('/quantity/<get_quantity>')
+def quantity(get_quantity):
+    item_data = Storage.query.filter_by(item=get_quantity).all()
+    quantityArray = []
+    for quantity in item_data:
+        quantityObj = {}
+        quantityObj['item'] = quantity.item
+        quantityObj['quantity'] = quantity.quantity
+        quantity.append(quantityObj)
+        quantityArray.insert(0,'--')
+    return jsonify({'quantityList' : quantityArray})

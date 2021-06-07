@@ -33,6 +33,10 @@
                         <!-- <label for="email">物品:</label> -->
                         {{ form.item(class="form-control")}}
                     </div>
+                    <div class="form-group">
+                        <!-- <label for="email">物品:</label> -->
+                        {{ form.quantity(class="form-control")}}
+                    </div>
                     <input type="submit" class="btn btn-success" btn-lg>
                 </form>
             </div>
@@ -42,6 +46,7 @@
         var location_select = document.getElementById('location');
         var size_select = document.getElementById('size');
         var item_select = document.getElementById('item');
+        var quantity_select = document.getElementById('quantity');
 
         location_select.onchange = function () {
             // 获取选择框中的内容
@@ -68,6 +73,19 @@
                         optionHTML += '<option value="' + item.item + '">' + item.item + '</option>'
                     }
                     item_select.innerHTML = optionHTML;
+                });
+            });
+        }
+
+        item_select.onchange = function () {
+            get_quantity = item_select.value;
+            fetch('quantity/' + unescape(get_quantity)).then(function (response) {
+                response.json().then(function (data) {
+                    optionHTML = '';
+                    for (quantity of data.quantityList) {
+                        optionHTML += '<option value="' + quantity.quantity + '">' + quantity.quantity + '</option>'
+                    }
+                    quantity_select.innerHTML = optionHTML;
                 });
             });
         }

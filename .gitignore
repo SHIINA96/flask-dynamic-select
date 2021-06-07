@@ -1,3 +1,4 @@
 *.jpg
 *.docx
 /env
+/example

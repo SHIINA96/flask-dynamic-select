@@ -13,8 +13,9 @@ def outbound():
         location = Storage.query.filter_by(location=form.location.data).first()
         size = Storage.query.filter_by(size=form.size.data).first()
         item = Storage.query.filter_by(item=form.item.data).first()
-        quantity = Storage.query.filter_by(quantity=form.quantity.data).first()
-        return '<h1>地点 : {}, 规格: {}, 物品: {}, 数量: {}</h1>'.format(location.location, size.size, item.item, quantity.quantity)
+        # quantity = Storage.query.filter_by(quantity=form.quantity.data).first()
+        quantity = form.quantity.data
+        return '<h1>地点 : {}, 规格: {}, 物品: {}, 数量: {}</h1>'.format(location.location, size.size, item.item, quantity)
     return render_template('outbound.html', form=form)
  
 @app.route('/size/<get_size>')
@@ -64,16 +65,10 @@ def item(get_item):
 @app.route('/quantity/<get_quantity>')
 def quantity(get_quantity):
     item_data = Storage.query.filter_by(item=get_quantity, size=itemSize, location=itemLocation).all()
-    maxQuantity = item_data[0].quantity
-    
-    maxQuantityArray =[]
-    for i in range(0, maxQuantity+1):
-        maxQuantityArray.append(i)
-
     quantityArray =[]
-    for i in maxQuantityArray:
+    for i in range(0, item_data[0].quantity+1):
         quantityObj = {}
         quantityObj['item'] = item_data[0].item
-        quantityObj['quantity'] = maxQuantityArray.index(i)
+        quantityObj['quantity'] = i
         quantityArray.append(quantityObj)
     return jsonify({'quantityList' : quantityArray})

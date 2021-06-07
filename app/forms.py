@@ -4,4 +4,4 @@ class Form(FlaskForm):
     location = SelectField('location', choices=[("", "---")])
     size = SelectField('size', choices=[("", "---")])
     item = SelectField('item', choices=[("", "---")])
-    quantity = SelectField('quantity', choices=[("", "---")])
+    quantity = SelectField('quantity', coerce=int)

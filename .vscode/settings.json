@@ -1,11 +1,3 @@
 {
-    "python.pythonPath": "venv/bin/python",
-    "sqltools.connections": [
-        {
-            "previewLimit": 50,
-            "driver": "SQLite",
-            "database": "${workspaceFolder:test}/blog.db",
-            "name": "1"
-        }
-    ]
+    "python.pythonPath": "/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.8/bin/python3.8"
 }

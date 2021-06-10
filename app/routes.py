@@ -2,12 +2,12 @@ from app import app
 from flask import Flask, render_template, request, jsonify
 from app.models import Storage
 from app.forms import Form
-
+import math
 
 @app.route('/outbound', methods=['GET', 'POST'])
 def outbound():
     form = Form()
-    form.location.choices = ['---', '木星', '地球']
+    form.location.choices = ['---', '木星', '地球', '火星']
  
     if request.method == 'POST':
         location = Storage.query.filter_by(location=form.location.data).first()
@@ -21,12 +21,14 @@ def outbound():
 @app.route('/size/<get_size>')
 def sizebylocation(get_size):
     # 从 jQuery 中获取选项 size， 并从数据库中查找数据
-    size = Storage.query.filter_by(location=get_size).all()
+    # size = Storage.query.filter_by(location=get_size).all()
+    # 只获取 size 中不重复的项
+    size = Storage.query.with_entities(Storage.size).filter_by(location=get_size).distinct().all()
     #  创建新的 List 存储从数据库中获取的数据
     sizeArray = []
     for item in size:
         sizeObj = {}
-        sizeObj['id'] = item.id
+        # sizeObj['id'] = item.id
         sizeObj['size'] = item.size
         sizeArray.append(sizeObj)
     # 将 List 转为 JSON 并添加 id
@@ -37,7 +39,7 @@ def sizebylocation(get_size):
   
 @app.route('/item/<get_item>')
 def item(get_item):
-    size_data = Storage.query.filter_by(size=get_item).all()
+    size_data = Storage.query.filter_by(size=get_item, location=itemLocation).all()
     itemArray = []
     for item in size_data:
         itemObj = {}
@@ -66,7 +68,7 @@ def item(get_item):
 def quantity(get_quantity):
     item_data = Storage.query.filter_by(item=get_quantity, size=itemSize, location=itemLocation).all()
     quantityArray =[]
-    for i in range(0, item_data[0].quantity+1):
+    for i in range(0, math.ceil(item_data[0].quantity)+1): # 物品数量出现小数时会向上取整
         quantityObj = {}
         quantityObj['item'] = item_data[0].item
         quantityObj['quantity'] = i

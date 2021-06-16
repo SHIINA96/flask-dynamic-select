@@ -1,4 +1,5 @@
 *.jpg
 *.docx
+*.DS_Store
 /env
 /example

@@ -1,13 +1,13 @@
 from app import app
 from flask import Flask, render_template, request, jsonify
-from app.models import Storage
+from app.models import Storage, User, db
 from app.forms import Form
 import math
 
 @app.route('/outbound', methods=['GET', 'POST'])
 def outbound():
     form = Form()
-    form.location.choices = ['---', '木星', '地球', '火星']
+    form.location.choices = ['---', '金星', '水星', '火星', '木星', '土星', '地球', '仓库']
  
     if request.method == 'POST':
         location = Storage.query.filter_by(location=form.location.data).first()
@@ -15,7 +15,16 @@ def outbound():
         item = Storage.query.filter_by(item=form.item.data).first()
         # quantity = Storage.query.filter_by(quantity=form.quantity.data).first()
         quantity = form.quantity.data
-        return '<h1>地点 : {}, 规格: {}, 物品: {}, 数量: {}</h1>'.format(location.location, size.size, item.item, quantity)
+
+        totalQuantity = Storage.query.filter_by(item=form.item.data, size=form.size.data, location=form.location.data).all()
+        totalQuantity = totalQuantity[0].quantity
+        quantity = totalQuantity - quantity
+
+        update = Storage.query.filter_by(item=form.item.data, size=form.size.data, location=form.location.data).first()
+        update.quantity = quantity
+        db.session.commit()
+
+        # return '<h1>地点 : {}, 规格: {}, 物品: {}, 数量: {}</h1>'.format(location.location, size.size, item.item, quantity)
     return render_template('outbound.html', form=form)
  
 @app.route('/size/<get_size>')

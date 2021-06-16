@@ -1,5 +1,16 @@
 from app import SQLAlchemy, db, datetime
  
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password = db.Column(db.String(128), nullable=False)
+    create_time = db.Column(db.DateTime, default=datetime.now)
+    update_time = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
+    toStorage = db.relationship('Storage', backref=db.backref('author', lazy=True))
+
+
+
 class Storage(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     item = db.Column(db.String(140), nullable=False)
@@ -16,3 +27,4 @@ class Storage(db.Model):
     user_id = db.Column(db.String(80), db.ForeignKey('user.username'), nullable=False) # class 名字小写识别为 User 表
     create_time = db.Column(db.DateTime, default=datetime.now)
     update_time = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
+
